@@ -1,14 +1,6 @@
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
-import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
 import java.awt.GridLayout;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-
 
 public class ConfigTools {
 
