@@ -15,6 +15,7 @@ public class Terminal extends JDialog {
 	private RSyntaxTextArea terminal;
 	
 	public Terminal() {
+		
 		setTitle("Terminal");
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);

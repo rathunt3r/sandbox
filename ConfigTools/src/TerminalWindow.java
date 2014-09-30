@@ -21,6 +21,7 @@ public class TerminalWindow extends JFrame {
 	public TerminalWindow(){
 		
 		try {
+			
 		
 			setAlwaysOnTop(true);			
 			setVisible(true);			
