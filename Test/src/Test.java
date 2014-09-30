@@ -11,8 +11,23 @@ public class Test {
 				"/opt/mirror/loadingGroup01_1 is kept open by: zxc (PID: 99, UID: 0).\n" +
 				"/opt/mirror/loadingGroup01_1 iD: 0).\n" +
 				"/opt/mirror/adm/etc is kept open by: named (PID: 29487, UID: 0).\n";
-		 
 		check(log);
+		
+		String log2 = "Remove /etc/inittab from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
+				"Remove /etc/securetty from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
+				"Remove /etc/rsyslog.conf from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
+				"Remove /etc/sysctl.conf from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n";
+		check2(log2);
+		
+		
+		
+	}
+	
+	private static void check2(String response){
+		String[] lines = response.split("\n");
+		for (String line:lines){
+			
+    	}
 	}
 	
 	private static void check(String response){
