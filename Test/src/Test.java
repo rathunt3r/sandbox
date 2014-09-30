@@ -13,7 +13,7 @@ public class Test {
 				"/opt/mirror/adm/etc is kept open by: named (PID: 29487, UID: 0).\n";
 		check(log);
 		
-		String log2 = "Remove /etc/inittab from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
+		String log2 = "Remove /etc/save_ioconfig.conf from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
 				"Remove /etc/securetty from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
 				"Remove /etc/rsyslog.conf from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n" +
 				"Remove /etc/sysctl.conf from the /etc/save_ioconfig.conf config file, it is not allowed to be saved \n";
@@ -26,7 +26,13 @@ public class Test {
 	private static void check2(String response){
 		String[] lines = response.split("\n");
 		for (String line:lines){
-			
+			//System.out.println((line.split(" "))[1].replace("/", "\\/"));
+			//System.out.println("#" + (line.split(" "))[1].replace("/", "\\/"));
+			String oldString = (line.split(" "))[1].replace("/", "\\/");
+        	String newString = "# " + oldString;
+        	String configFile = (line.split(" "))[4];
+        	String command = "sed -i 's/" + oldString + "/" + newString + "/g' " + configFile;
+        	System.out.println(command);
     	}
 	}
 	
