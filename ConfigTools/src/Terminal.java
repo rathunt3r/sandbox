@@ -4,12 +4,15 @@ import javax.swing.JScrollPane;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 
 public class Terminal extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private RSyntaxTextArea terminal;
+	private ProcessRunner processRunner;
 	
 	public Terminal() {
 		
@@ -18,19 +21,29 @@ public class Terminal extends JDialog {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setVisible(true);
 		
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 700, 300);
+		
 		getContentPane().setLayout(new BorderLayout());
 		{
 			terminal = new RSyntaxTextArea();
-			terminal.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_JAVA);
+			terminal.setEditable(false);
+			terminal.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_UNIX_SHELL);
 			terminal.setCodeFoldingEnabled(true);
 			terminal.setAntiAliasingEnabled(true);
 			JScrollPane terminalPane = new JScrollPane();
 			getContentPane().add(terminalPane);	
 			terminalPane.setViewportView(terminal);		
 			
-			(new Thread(new CommandExecutor(terminal))).start();
+			processRunner = new ProcessRunner(terminal, "ping -c 10 index.hu");
+			//(new Thread(new ProcessRunner(terminal, "ping -c 10 index.hu"))).start();
 		}
+		
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				processRunner.destroy();
+			}
+		});
+		
 	}
-
 }

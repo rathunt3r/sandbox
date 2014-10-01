@@ -1,6 +1,10 @@
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import java.awt.GridLayout;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class ConfigTools {
 
@@ -27,11 +31,6 @@ public class ConfigTools {
 	 */
 	public ConfigTools() {
 		initialize();
-		
-		//TerminalWindow tw = new TerminalWindow();
-		Terminal t = new Terminal();
-		//Test test = new Test();
-		//t.setVisible(true);
 	}
 
 	/**
@@ -42,5 +41,19 @@ public class ConfigTools {
 		frame.setBounds(100, 100, 861, 547);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		JButton btnNewButton = new JButton("Run");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				Terminal t = new Terminal();
+			}
+		});
+		btnNewButton.setBounds(87, 100, 117, 25);
+		panel.add(btnNewButton);
 	}
 }
