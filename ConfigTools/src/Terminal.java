@@ -13,8 +13,11 @@ public class Terminal extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private RSyntaxTextArea terminal;
 	private ProcessRunner processRunner;
+	private String command;
 	
-	public Terminal() {
+	public Terminal(String command) {
+		
+		this.command = command;
 		
 		setTitle("Terminal");
 		setAlwaysOnTop(true);
@@ -34,16 +37,8 @@ public class Terminal extends JDialog {
 			getContentPane().add(terminalPane);	
 			terminalPane.setViewportView(terminal);		
 			
-			processRunner = new ProcessRunner(terminal, "ping -c 10 index.hu");
+			processRunner = new ProcessRunner(terminal, command);
 			//(new Thread(new ProcessRunner(terminal, "ping -c 10 index.hu"))).start();
-		}
-		
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosed(WindowEvent e) {
-				processRunner.destroy();
-			}
-		});
-		
+		}		
 	}
 }

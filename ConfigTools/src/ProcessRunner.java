@@ -32,11 +32,11 @@ public class ProcessRunner implements Runnable{
 	public void  run() {				
 		try {
 			process = runtime.exec(command);		
-
+			//System.out.println(process);
 			BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
 					
 			String line;
-			int i = 0;
+			//int i = 0;
 			while ((line = br.readLine()) != null) {
 				terminal.append(line + "\n");
 				synchronized(this){
@@ -44,15 +44,14 @@ public class ProcessRunner implements Runnable{
 						wait();
 					}
 				}
-				if (i == 5){
-					new Dialog(this);
-				}
-				i++;
+				//if (i == 5){
+				//	new Dialog(this);
+				//}
+				//i++;
 			}
 		
 		} catch (IOException | InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			terminal.append(e.toString());
 		}		
 	}
 	
@@ -66,7 +65,10 @@ public class ProcessRunner implements Runnable{
 	}
 	
 	public void destroy(){
-		process.destroy();
+		//
+		//	process.destroy();
+		
+		System.out.println(process);
 	}
 	
 	@SuppressWarnings("unused")
