@@ -267,4 +267,8 @@ public class ConfigTools {
 		comboFrom.setBounds(137, 69, 130, 20);
 		panelParameters.add(comboFrom);
 	}
+	
+	private void test(){
+		
+	}
 }
