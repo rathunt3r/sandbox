@@ -22,13 +22,27 @@ import javax.swing.JCheckBox;
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.SimpleBookmark;
+
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class ConfigTools {
 
 	private JFrame frame;
-	private JTextField deployDirectory;
+	private JTextField UATDeployDirectory;
 	private JCheckBox 	cbFull, 
 						cbHealthCheck,
 						cbDry,
@@ -68,9 +82,31 @@ public class ConfigTools {
 
 	public ConfigTools() {
 		initialize();
+		
+		try {
+			PdfReader reader;
+		
+			reader = new PdfReader("/home/egabczo/upgrade_doc.pdf");
+		
+			List list = SimpleBookmark.getBookmark(reader);
+			for (Iterator i = list.iterator(); i.hasNext();) {
+				showBookmark((Map) i.next());
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	
+	 private static void showBookmark(Map bookmark) {
+		    System.out.println(bookmark.get("Title"));
+		    ArrayList kids = (ArrayList) bookmark.get("Kids");
+		    if (kids == null)
+		      return;
+		    for (Iterator i = kids.iterator(); i.hasNext();) {
+		      showBookmark((Map) i.next());
+		    }
+		  }
 	
 	private void initialize() {
 		frame = new JFrame();
@@ -89,14 +125,14 @@ public class ConfigTools {
 		btnStartUAT.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				TerminalWindow t = new TerminalWindow(deployDirectory.getText() + "/upgradeTool.sh -dry");
+				TerminalWindow t = new TerminalWindow(UATDeployDirectory.getText() + "/upgradeTool.sh -dry");
 			}
 		});
 		btnStartUAT.setBounds(51, 434, 117, 25);
 		panelUAT.add(btnStartUAT);
 		
-		deployDirectory = new JTextField();
-		deployDirectory.addMouseListener(new MouseAdapter() {
+		UATDeployDirectory = new JTextField();
+		UATDeployDirectory.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				JFileChooser chooser = new JFileChooser();
@@ -107,16 +143,16 @@ public class ConfigTools {
 
 			    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 			    	System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-			    	deployDirectory.setText(chooser.getSelectedFile().toString());
+			    	UATDeployDirectory.setText(chooser.getSelectedFile().toString());
 			    	System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
 			    } else {
 			    	System.out.println("No Selection ");
 			    }
 			}
 		});
-		deployDirectory.setBounds(126, 23, 365, 19);
-		panelUAT.add(deployDirectory);
-		deployDirectory.setColumns(10);
+		UATDeployDirectory.setBounds(126, 23, 365, 19);
+		panelUAT.add(UATDeployDirectory);
+		UATDeployDirectory.setColumns(10);
 		
 		JLabel lblUATDeployDir = new JLabel("UAT deploy dir");
 		lblUATDeployDir.setBounds(12, 25, 152, 15);
@@ -144,6 +180,15 @@ public class ConfigTools {
 			}
 		});
 		cbFull.setBounds(8, 41, 150, 20);
+		cbFull.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (cbFull.isSelected()){
+					cbFrom.setSelected(false);
+					cbTo.setSelected(false);
+					cbSection.setSelected(false);
+				}
+			}
+		});
 		panelParameters.add(cbFull);
 		
 		cbHealthCheck = new JCheckBox(" -healthcheck");
@@ -173,6 +218,7 @@ public class ConfigTools {
 			public void itemStateChanged(ItemEvent e) {
 				if (cbFrom.isSelected()){
 					cbHealthCheck.setSelected(false);
+					cbFull.setSelected(false);
 				}
 			}
 		});
@@ -184,6 +230,7 @@ public class ConfigTools {
 			public void itemStateChanged(ItemEvent e) {
 				if (cbTo.isSelected()){
 					cbHealthCheck.setSelected(false);
+					cbFull.setSelected(false);
 				}
 			}
 		});
@@ -195,6 +242,7 @@ public class ConfigTools {
 			public void itemStateChanged(ItemEvent e) {
 				if (cbSection.isSelected()){
 					cbHealthCheck.setSelected(false);
+					cbFull.setSelected(false);
 				}
 			}
 		});
@@ -266,9 +314,5 @@ public class ConfigTools {
 		comboFrom.setModel(new DefaultComboBoxModel<String>(new String[] {"test", "adfda", "werwer", "werwe"}));
 		comboFrom.setBounds(137, 69, 130, 20);
 		panelParameters.add(comboFrom);
-	}
-	
-	private void test(){
-		
 	}
 }
