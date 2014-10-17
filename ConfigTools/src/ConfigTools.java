@@ -89,7 +89,7 @@ public class ConfigTools {
 		btnStartUAT.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				Terminal t = new Terminal(deployDirectory.getText() + "/upgradeTool.sh -dry");
+				TerminalWindow t = new TerminalWindow(deployDirectory.getText() + "/upgradeTool.sh -dry");
 			}
 		});
 		btnStartUAT.setBounds(51, 434, 117, 25);

@@ -8,14 +8,14 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 
-public class Terminal extends JDialog {
+public class TerminalWindow extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private RSyntaxTextArea terminal;
 	private ProcessRunner processRunner;
 	private String command;
 	
-	public Terminal(String command) {
+	public TerminalWindow(String command) {
 		
 		this.command = command;
 		
