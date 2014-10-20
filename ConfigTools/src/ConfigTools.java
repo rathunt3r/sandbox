@@ -22,6 +22,8 @@ import javax.swing.JCheckBox;
 import javax.swing.JTabbedPane;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.BaseFont;
@@ -35,6 +37,7 @@ import java.awt.event.ItemEvent;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -82,92 +85,90 @@ public class ConfigTools {
 
 	public ConfigTools() {
 		initialize();
-		
-		try {
-			PdfReader reader;
-		
-			reader = new PdfReader("/home/egabczo/upgrade_doc.pdf");
-		
-			List list = SimpleBookmark.getBookmark(reader);
-			for (Iterator i = list.iterator(); i.hasNext();) {
-				showBookmark((Map) i.next());
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
-
-	 private static void showBookmark(Map bookmark) {
-		    System.out.println(bookmark.get("Title"));
-		    ArrayList kids = (ArrayList) bookmark.get("Kids");
-		    if (kids == null)
-		      return;
-		    for (Iterator i = kids.iterator(); i.hasNext();) {
-		      showBookmark((Map) i.next());
-		    }
-		  }
 	
 	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(100, 100, 861, 620);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
-		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		frame.getContentPane().add(tabbedPane);
-		
-		JPanel panelUAT = new JPanel();
-		tabbedPane.addTab("UAT tool", null, panelUAT, null);
-		panelUAT.setLayout(null);
-		
-		JButton btnStartUAT = new JButton("Run");
-		btnStartUAT.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				TerminalWindow t = new TerminalWindow(UATDeployDirectory.getText() + "/upgradeTool.sh -dry");
-			}
-		});
-		btnStartUAT.setBounds(51, 434, 117, 25);
-		panelUAT.add(btnStartUAT);
-		
-		UATDeployDirectory = new JTextField();
-		UATDeployDirectory.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				JFileChooser chooser = new JFileChooser();
-			    chooser.setCurrentDirectory(new java.io.File("."));
-			    chooser.setDialogTitle("Select UAT deploy directory");
-			    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			    chooser.setAcceptAllFileFilterUsed(false);
-
-			    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-			    	System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
-			    	UATDeployDirectory.setText(chooser.getSelectedFile().toString());
-			    	System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
-			    } else {
-			    	System.out.println("No Selection ");
-			    }
-			}
-		});
-		UATDeployDirectory.setBounds(126, 23, 365, 19);
-		panelUAT.add(UATDeployDirectory);
-		UATDeployDirectory.setColumns(10);
-		
-		JLabel lblUATDeployDir = new JLabel("UAT deploy dir");
-		lblUATDeployDir.setBounds(12, 25, 152, 15);
-		panelUAT.add(lblUATDeployDir);
-		
-		JPanel panelParameters = new JPanel();
-		panelParameters.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panelParameters.setBounds(551, 12, 291, 543);
-		panelUAT.add(panelParameters);
-		panelParameters.setLayout(null);
-		
-		parametersSetup(panelParameters);
-		
-		JPanel panelJCAT = new JPanel();
-		tabbedPane.addTab("JCAT tool", null, panelJCAT, null);
+		try {	
+			frame = new JFrame();
+			frame.setBounds(100, 100, 861, 620);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+						
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				} 
+			}			
+			
+			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+			frame.getContentPane().add(tabbedPane);
+			
+			JPanel panelUAT = new JPanel();
+			tabbedPane.addTab("UAT tool", null, panelUAT, null);
+			panelUAT.setLayout(null);
+			
+			JButton btnStartUAT = new JButton("Run");
+			btnStartUAT.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					TerminalWindow t = new TerminalWindow(UATDeployDirectory.getText() + "/upgradeTool.sh -dry");
+				}
+			});
+			btnStartUAT.setBounds(51, 434, 117, 25);
+			panelUAT.add(btnStartUAT);
+			
+			UATDeployDirectory = new JTextField();
+			UATDeployDirectory.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					JFileChooser chooser = new JFileChooser();
+				    chooser.setCurrentDirectory(new java.io.File("."));
+				    chooser.setDialogTitle("Select UAT deploy directory");
+				    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				    chooser.setAcceptAllFileFilterUsed(false);
+	
+				    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+				    	System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+				    	UATDeployDirectory.setText(chooser.getSelectedFile().toString());
+				    	System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+				    } else {
+				    	System.out.println("No Selection ");
+				    }
+				}
+			});
+			UATDeployDirectory.setBounds(126, 23, 365, 19);
+			panelUAT.add(UATDeployDirectory);
+			UATDeployDirectory.setColumns(10);
+			
+			JLabel lblUATDeployDir = new JLabel("UAT deploy dir");
+			lblUATDeployDir.setBounds(12, 25, 152, 15);
+			panelUAT.add(lblUATDeployDir);
+			
+			JPanel panelParameters = new JPanel();
+			panelParameters.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 0)), "Parameters", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+			panelParameters.setBounds(551, 12, 291, 543);
+			panelUAT.add(panelParameters);
+			panelParameters.setLayout(null);
+			
+			parametersSetup(panelParameters);
+			
+			JPanel panelJCAT = new JPanel();
+			tabbedPane.addTab("JCAT tool", null, panelJCAT, null);
+			
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (InstantiationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
 	
 	private void parametersSetup(JPanel panelParameters){
@@ -243,10 +244,11 @@ public class ConfigTools {
 				if (cbSection.isSelected()){
 					cbHealthCheck.setSelected(false);
 					cbFull.setSelected(false);
+					new SectionSelector(UATDeployDirectory.getText());
 				}
 			}
 		});
-		cbSection.setBounds(8, 113, 110, 20);
+		cbSection.setBounds(8, 113, 110, 24);
 		panelParameters.add(cbSection);
 		
 		cbHelp = new JCheckBox(" -help");
