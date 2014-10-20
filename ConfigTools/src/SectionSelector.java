@@ -125,6 +125,8 @@ public class SectionSelector extends JDialog {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					System.out.println(comboBox.getSelectedItem());
 					
+					/*
+					
 					File fXmlFile = new File(UATDeployDirectory + "/config/" + comboBox.getSelectedItem().toString());
 					DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 					DocumentBuilder dBuilder;
@@ -173,6 +175,9 @@ public class SectionSelector extends JDialog {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					
+					*/
+					
 				}
 			}
 		});

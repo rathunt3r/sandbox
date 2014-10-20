@@ -15,6 +15,8 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import java.awt.Color;
 
@@ -25,6 +27,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.apache.commons.io.FileUtils;
+
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
@@ -34,6 +38,7 @@ import com.itextpdf.text.pdf.SimpleBookmark;
 
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,6 +46,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
 
 public class ConfigTools {
 
@@ -68,7 +75,8 @@ public class ConfigTools {
 						cbZone1,
 						cbZone2,
 						cbApplication;
-	JComboBox<String> comboFrom;				
+	JComboBox<String> comboFrom,
+						comboSuiteSelector;				
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -84,22 +92,42 @@ public class ConfigTools {
 	}
 
 	public ConfigTools() {
+		setLookAndFeel();
 		initialize();
 	}
 	
-	private void initialize() {
+	private void setLookAndFeel() {
 		try {	
-			frame = new JFrame();
-			frame.setBounds(100, 100, 861, 620);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
-						
 			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
 				if ("com.sun.java.swing.plaf.gtk.GTKLookAndFeel".equals(info.getClassName())) {
 					javax.swing.UIManager.setLookAndFeel(info.getClassName());
 					break;
 				} 
-			}			
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void initialize() {
+			
+			frame = new JFrame();
+			frame.setBounds(100, 100, 861, 620);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.getContentPane().setLayout(new GridLayout(0, 1, 0, 0));
+						
+						
 			
 			JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 			frame.getContentPane().add(tabbedPane);
@@ -119,6 +147,10 @@ public class ConfigTools {
 			panelUAT.add(btnStartUAT);
 			
 			UATDeployDirectory = new JTextField();
+			UATDeployDirectory.setToolTipText("rthshdsghsghsg");
+			
+			
+			
 			UATDeployDirectory.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
@@ -127,7 +159,9 @@ public class ConfigTools {
 				    chooser.setDialogTitle("Select UAT deploy directory");
 				    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				    chooser.setAcceptAllFileFilterUsed(false);
-	
+				    
+				    e.getComponent().setBackground(Color.GREEN);
+				    
 				    if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
 				    	System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
 				    	UATDeployDirectory.setText(chooser.getSelectedFile().toString());
@@ -137,12 +171,48 @@ public class ConfigTools {
 				    }
 				}
 			});
-			UATDeployDirectory.setBounds(126, 23, 365, 19);
+			UATDeployDirectory.getDocument().addDocumentListener(new DocumentListener() {
+				  public void changedUpdate(DocumentEvent e) {
+				    warn(e);
+				  }
+				  public void removeUpdate(DocumentEvent e) {
+				    warn(e);
+				  }
+				  public void insertUpdate(DocumentEvent e) {
+				    warn(e);
+				  }
+
+				  public void warn(DocumentEvent e) {
+				     System.out.println(e);
+				     try {
+							File dir = new File(UATDeployDirectory.getText() + "/config");
+							String[] extensions = new String[] { "xml" };
+							System.out.println(dir);
+							List<File> files = (List<File>) FileUtils.listFiles(dir, extensions, false);
+							for (File file : files) {
+								System.out.println("file: " + file.getCanonicalPath());
+								comboSuiteSelector.addItem(file.getName());
+								comboSuiteSelector.setEnabled(true);
+							}
+							
+							UATDeployDirectory.setBackground(new Color(0, 255, 0));
+							UATDeployDirectory.repaint();
+						} catch (IOException ex) {
+							// TODO Auto-generated catch block
+							ex.printStackTrace();
+							comboSuiteSelector.setEnabled(false);
+							UATDeployDirectory.setBackground(Color.RED);
+							UATDeployDirectory.repaint();
+						}
+				  }
+				});
+			
+			UATDeployDirectory.setBounds(128, 8, 411, 24);
 			panelUAT.add(UATDeployDirectory);
 			UATDeployDirectory.setColumns(10);
 			
 			JLabel lblUATDeployDir = new JLabel("UAT deploy dir");
-			lblUATDeployDir.setBounds(12, 25, 152, 15);
+			lblUATDeployDir.setBounds(12, 7, 152, 24);
 			panelUAT.add(lblUATDeployDir);
 			
 			JPanel panelParameters = new JPanel();
@@ -153,22 +223,19 @@ public class ConfigTools {
 			
 			parametersSetup(panelParameters);
 			
+			comboSuiteSelector = new JComboBox<String>();
+			comboSuiteSelector.setEnabled(false);
+			comboSuiteSelector.setBounds(132, 44, 411, 24);
+			comboSuiteSelector.addItem("Select suite!");
+			panelUAT.add(comboSuiteSelector);
+			
+			JLabel lblTestSuite = new JLabel("Test suite");
+			lblTestSuite.setBounds(12, 44, 152, 24);
+			panelUAT.add(lblTestSuite);
+			
 			JPanel panelJCAT = new JPanel();
 			tabbedPane.addTab("JCAT tool", null, panelJCAT, null);
 			
-		} catch (ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 	}
 	
 	private void parametersSetup(JPanel panelParameters){
