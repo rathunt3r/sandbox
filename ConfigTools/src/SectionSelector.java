@@ -56,6 +56,8 @@ public class SectionSelector extends JDialog {
 	
 	public SectionSelector(final String UATDeployDirectory) {
 		
+		
+		
 		getSections();
 		
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
