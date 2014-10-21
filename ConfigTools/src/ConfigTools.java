@@ -28,6 +28,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.commons.io.FileUtils;
+import org.ini4j.Wini;
 
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.pdf.BaseFont;
@@ -76,7 +77,9 @@ public class ConfigTools {
 						cbZone2,
 						cbApplication;
 	JComboBox<String> comboFrom,
-						comboSuiteSelector;				
+						comboSuiteSelector;
+	
+	public Wini settingsIni;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -94,6 +97,15 @@ public class ConfigTools {
 	public ConfigTools() {
 		setLookAndFeel();
 		initialize();
+		
+		try {
+			settingsIni = new Wini(new File("settings.ini"));	        
+		} 
+		catch (IOException ioe) {
+			
+		}
+		
+		loadSettingsFromIni();
 	}
 	
 	private void setLookAndFeel() {
@@ -155,7 +167,8 @@ public class ConfigTools {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					JFileChooser chooser = new JFileChooser();
-				    chooser.setCurrentDirectory(new java.io.File("."));
+				    //chooser.setCurrentDirectory(new java.io.File("."));
+					chooser.setCurrentDirectory(new java.io.File(UATDeployDirectory.getText()));
 				    chooser.setDialogTitle("Select UAT deploy directory");
 				    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				    chooser.setAcceptAllFileFilterUsed(false);
@@ -197,13 +210,21 @@ public class ConfigTools {
 							
 							UATDeployDirectory.setBackground(new Color(0, 255, 0));
 							UATDeployDirectory.repaint();
-						} catch (IOException ex) {
+						} catch (IOException ioe) {
 							// TODO Auto-generated catch block
-							ex.printStackTrace();
+							ioe.printStackTrace();
 							comboSuiteSelector.setEnabled(false);
 							UATDeployDirectory.setBackground(Color.RED);
 							UATDeployDirectory.repaint();
 						}
+						  catch (IllegalArgumentException iae) {
+								// TODO Auto-generated catch block
+								//iae.printStackTrace();
+							  System.out.println(iae.toString());
+								comboSuiteSelector.setEnabled(false);
+								UATDeployDirectory.setBackground(Color.RED);
+								UATDeployDirectory.repaint();
+							}
 				  }
 				});
 			
@@ -236,6 +257,20 @@ public class ConfigTools {
 			JPanel panelJCAT = new JPanel();
 			tabbedPane.addTab("JCAT tool", null, panelJCAT, null);
 			
+	}
+	
+	private void loadSettingsFromIni() {						
+        UATDeployDirectory.setText(settingsIni.get("path", "UATDeployDirectory"));
+	}
+	
+	public void saveSettingValue(String section, String key, String value) {
+		try {
+			settingsIni.put(section, key, value);       
+			settingsIni.store();
+		}
+		catch (IOException ioe) {
+			
+		}
 	}
 	
 	private void parametersSetup(JPanel panelParameters){

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<Test type="setting">
+    <Name>ST-CHECK-CONFIG</Name>
+    <SuiteClass>se.ericsson.tsp.uat.test.ConfigCheckTest</SuiteClass>
+    <Method>step_CHECK_CONFIG</Method>
+    <Description>Check configuration</Description>
+    <Type>CONFIGCHECK</Type>
+    <StopOnEvent>false</StopOnEvent>
+    <FetchLog>true</FetchLog>
+</Test>
