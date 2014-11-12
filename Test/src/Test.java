@@ -1,7 +1,11 @@
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -23,20 +27,68 @@ public class Test {
 		
 		//dateDiff();
 		
-		isEmptyOrNullPrintout();
+		//isEmptyOrNullPrintout();
+		
+		listCustomSorting();
+	}
+	
+	private static void listCustomSorting() {
+			try {
+				List<Date> dateList = new ArrayList<Date>();
+				
+				SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd. HH:mm");
+				dateList.add(format.parse("2014.09.11. 10:10"));
+				dateList.add(format.parse("2013.09.33. 10:10"));
+				dateList.add(format.parse("2012.09.11. 10:10"));
+				dateList.add(format.parse("2017.09.11. 10:10"));
+				dateList.add(format.parse("2009.09.11. 10:10"));
+				
+				System.out.println(dateList);
+				
+				Collections.sort(dateList, new Comparator<Date>(){
+				    @Override
+				    public int compare(Date arg0, Date arg1) {
+				        return arg0.compareTo(arg1);
+				    }
+				});
+				
+				System.out.println(dateList);
+				
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
 	
 	private static void isEmptyOrNullPrintout(){
 		Date date = new Date();
+		Date date2 = new Date();
+		
+		System.out.println((int)( (date.getTime() - date2.getTime()) / (1000 * 60 * 60 * 24)));
+		
 		String string1 = null;
 		String string2 = "string2";
 		
+		List<String> list1 = new ArrayList<String>();
+		List<Integer> list2 = new ArrayList<Integer>();
 		
-		System.out.println("Alarm found which meet the given condition(s): " + 
-				(date == null ? "" : date.toString()) + 
-				(isEmptyOrNull(string1) ? "" : string1) +
-				(isEmptyOrNull(string2) ? "" : string2)
+		list2.add(3);
+		
+		System.out.println("Alarm found which meet the given condition(s): " + "\n" +
+				(date == null ? "emptyOrNull" : date.toString()) + "\n" +
+				(isEmptyOrNull(string1) ? "emptyOrNull" : string1) + "\n" +
+				(isEmptyOrNull(string2) ? "emptyOrNull" : string2) + "\n" +
+				(isEmptyOrNull(list1) ? "emptyOrNull" : list1) + "\n" +
+				(isEmptyOrNull(list2) ? "emptyOrNull" : list2)
 		);
+	}
+	
+	private static boolean isEmptyOrNull(List<?> list){
+		if (list == null || list.size() == 0){
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	private static boolean isEmptyOrNull(String string){
